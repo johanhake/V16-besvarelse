@@ -8,6 +8,12 @@
     <style>
         #kontainer{
             position: relative;
+            width: 750px;
+            height: 500px;
+        }
+
+        #kontainer + p {
+            font-size: 0.75em;
         }
         
         #banner{
@@ -93,10 +99,12 @@
                 </div>
                 <button>Gjett!</button>
             </form>
+            <div id="quiz-beskjed"></div>
         </div>
     </div>
-
 </div>
+
+<p>Bilder fra shutterstock.com</p>
 
 <script>
 
@@ -119,21 +127,22 @@
 
     // Viser eller lukker quizen
     function quiz(display){
-        console.log(display);
+        document.querySelector("#quiz-beskjed").innerHTML = "";
         document.querySelector("#vis-new-york-quiz").style.display = display;
     }
 
     // Besvarer quizen
     function gjettByggning(event){
         event.preventDefault();
+        let quizBeskjed = document.querySelector("#quiz-beskjed");
         if(document.querySelector("#b1").checked){
-            event.target.innerHTML =`
+            quizBeskjed.innerHTML =`
             <h2>Dette kan du!</h2>
             Hva med å lære mer? Kom til New York!
             <button onclick="quiz('none')">Lukk</button>
             `;
         }else{
-            event.target.innerHTML =`
+            quizBeskjed.innerHTML =`
             <h2>Feil!</h2>
             Hva med å lære mer? Kom til New York!
             <button onclick="quiz('none')">Lukk</button>
