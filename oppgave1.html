@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oppgave 1</title>
+    <link rel="stylesheet" href="css/brukerinput.css">
+
+    <style>
+        #kontainer{
+            position: relative;
+        }
+        
+        #banner{
+            position: absolute;
+            display: grid;
+            grid-template-columns: 250px 500px;
+            width: 750px;
+        }
+
+        #banner img{
+            width: 100%;
+        }
+        
+        #new-york-img{
+            grid-row: span 2;
+        }
+
+        #st-petersburg-img{
+
+        }
+
+        #roma-img{
+
+        }
+
+        #vis-st-petersburg{
+            position: absolute;
+            display: none;
+        }
+
+        #vis-st-petersburg *{
+            position: absolute;
+        }
+
+        #vis-roma-video {
+            position: absolute;
+            display: none;
+        }
+
+        #vis-new-york-quiz {
+            position: absolute;
+            background-color: white;
+            display: none;
+            grid-template-columns: 250px 500px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="kontainer">
+
+    <div id="banner">
+        <img id="new-york-img"
+             onclick="quiz('grid')"
+             src="bilder/World_Trade_Center-icon.jpg" alt="">
+        <img id="st-petersburg-img"
+             onclick="stPetersburg('block')"
+             src="bilder/Vinterpalasset_St_Petersburg-icon.jpg" alt="">
+        <img id="roma-img"
+             onclick="romaVideo()"
+             src="bilder/Roma-icon.jpg" alt="">
+    </div>
+
+    <div id="vis-st-petersburg">
+        <img src="bilder/Vinterpalasset_St_Petersburg.jpg" alt="">
+        <button onclick="stPetersburg('none')">Lukk</button>
+    </div>
+
+    <div id="vis-roma-video">
+        <video id="roma-video" src="video/roma.mp4"></video>
+        <button onclick="lukkVideo()">Lukk</button>
+    </div>
+
+    <div id="vis-new-york-quiz">
+        <img src="bilder/World_Trade_Center-icon.jpg" alt="">
+        <div id="the-quiz">
+            <form onsubmit="gjettByggning(event)">
+                <h2>Hvilken bygning vises på bildet?</h2>
+                <div class="checkboxes">
+                    <input type="radio" name="ny" id="b1"><label for="b1">World Trade Senter</label>
+                    <input type="radio" name="ny" id="b2"><label for="b2">Empire state building</label>
+                    <input type="radio" name="ny" id="b3"><label for="b3">Chrystler building</label>
+                </div>
+                <button>Gjett!</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    // Viser eller lukker st petersburg bildet
+    function stPetersburg(display){
+        document.querySelector("#vis-st-petersburg").style.display = display;
+    }
+
+    // Viser roma videon og setter den på play
+    function romaVideo(){
+        document.querySelector("#vis-roma-video").style.display = "block";
+        document.querySelector("#roma-video").play();
+    }
+
+    // Stenger video spilleren og pauser videon
+    function lukkVideo(){
+        document.querySelector("#vis-roma-video").style.display = "none";
+        document.querySelector("#roma-video").pause();
+    }
+
+    // Viser eller lukker quizen
+    function quiz(display){
+        console.log(display);
+        document.querySelector("#vis-new-york-quiz").style.display = display;
+    }
+
+    // Besvarer quizen
+    function gjettByggning(event){
+        event.preventDefault();
+        if(document.querySelector("#b1").checked){
+            event.target.innerHTML =`
+            <h2>Dette kan du!</h2>
+            Hva med å lære mer? Kom til New York!
+            <button onclick="quiz('none')">Lukk</button>
+            `;
+        }else{
+            event.target.innerHTML =`
+            <h2>Feil!</h2>
+            Hva med å lære mer? Kom til New York!
+            <button onclick="quiz('none')">Lukk</button>
+            `;
+        }
+    }
+
+</script>
+</body>
+</html>
