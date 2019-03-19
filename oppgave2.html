@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oppgave 2</title>
+    <link rel="stylesheet" href="css/brukerinput.css">
+    <style>
+        body{
+            font-family: Verdana, sans-serif;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 1em;
+        }
+    </style>
+</head>
+<body>
+<h1>Språkquiz!</h1>
+<nav></nav>
+<main></main>
+<script>
+
+    // DOM
+    let nav = document.querySelector("nav");
+    let main = document.querySelector("main");
+
+    // Variabler
+    let alleSporsmal = {
+        amerikansk : [
+            {
+                sporsmal : "stol",
+                alternativ:["chair", "table", "frame"],
+                korrekt: "chair"
+            },            {
+                sporsmal : "bord",
+                alternativ:["chair", "table", "frame"],
+                korrekt: "table"
+            },            {
+                sporsmal : "ramme",
+                alternativ:["chair", "table", "frame"],
+                korrekt: "frame"
+            },            {
+                sporsmal : "båt",
+                alternativ:["boat", "car", "frame"],
+                korrekt: "boat"
+            },            {
+                sporsmal : "bil",
+                alternativ:["boat", "car", "frame"],
+                korrekt: "car"
+            }
+        ]
+    };
+
+    // Legger inn navbaren
+    for (let sprak in alleSporsmal){
+        nav.innerHTML += `<button onclick="lagSporsmal('${sprak}')">${sprak}</button>`
+    }
+
+
+    // Lager spørsmål knyttet til et språk
+    function lagSporsmal(sprak){
+
+        // Henter listen med alle spørsmål gitt et språk
+        let sporsmalListe = alleSporsmal[sprak];
+
+        let sporsmal = `<form onsubmit='sjekkBesvarelse(event,"${sprak}")'>`;
+
+        for (let i=0; i < sporsmalListe.length; i++){
+            let alternativ = sporsmalListe[i].alternativ;
+            sporsmal += `<article><h3>Hva heter <i>${sporsmalListe[i].sporsmal}</i> på ${sprak}?</h3>`;
+            for (let j=0; j < alternativ.length; j++){
+                sporsmal += `<label>
+                                <input name="oppgave_${i}"
+                                       type="radio"
+                                       data-svar="${alternativ[j]}">
+                              ${alternativ[j]}
+                             </label>`;
+            }
+            sporsmal += "</article>"
+        }
+        sporsmal += "<div></div><button>Send inn</button></div></form>";
+        main.innerHTML = sporsmal;
+    }
+
+    // Finner svaret til et spørsmål
+    function sjekkSvar(sprak, oppgaveI){
+        // Henter alle besvarelsene til en type radioknapper
+        let alleRadio = document.querySelectorAll
+                            (`[name=oppgave_${oppgaveI}]`);
+        let korrektSvar = alleSporsmal[sprak][oppgaveI].korrekt;
+
+        console.log(alleRadio, korrektSvar)
+        for (let i=0; i<alleRadio.length; i++){
+            if (alleRadio[i].checked){
+                return alleRadio[i].dataset.svar === korrektSvar;
+            }
+        }
+
+        return false;
+    }
+
+    function sjekkBesvarelse(event, sprak){
+        event.preventDefault();
+
+        let poeng = 0;
+
+        // Går igjennom alle spørsmålen og teller poeng
+        for (let i=0; i< alleSporsmal[sprak].length; i++){
+            if (sjekkSvar(sprak, i)){
+                poeng +=1;
+                console.log("korrekt")
+            }else{
+                poeng -=1;
+            }
+        }
+
+        if (poeng === alleSporsmal[sprak].length){
+            main.innerHTML = "<h1>Alle rett! Dette kan du :D</h1>";
+        }else if (poeng === 0 || poeng === 3){
+            main.innerHTML = "<h1>Her må du øver litt mer. Kanskje ta et av de mange språkkursene avisen tilbyr?</h1>";
+        }else if (poeng < 0){
+            main.innerHTML = "<h1>Dette gikk ikke så bra, men det er håp for alle som vil lære et nytt språk!</h1>";
+        }else{
+            main.innerHTML = `<h1>Bra jobbet! Du fikk ${poeng} poeng av ${alleSporsmal[sprak].length} mulige.</h1>`;
+        }
+    }
+
+
+</script>
+</body>
+</html>
