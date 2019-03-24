@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oppgave 3</title>
+    <link rel="stylesheet" href="css/brukerinput.css">
+    <style>
+        body{
+            font-family: Verdana, sans-serif;
+        }
+
+        main{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 10px;
+        }
+
+        #oppsummering{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        #oppsummering h3 {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Hotell-bestillinger!</h1>
+</header>
+<main>
+    <form >
+        <label for="selDestinasjon">Velg destinasjon</label>
+        <select onchange="oppdaterDestinasjon()" id="selDestinasjon" required>
+            <option value="">Velg destinasjon</option>
+        </select>
+
+        <label for="selSesong">Velg sesong</label>
+        <select onchange="oppdaterSesong()" id="selSesong" required>
+            <option value="">Velg sesong</option>
+            <option value="sommer">Sommer</option>
+            <option value="vinter">Vinter</option>
+        </select>
+
+        <label for="selHotell">Velg hotell</label>
+        <select onchange="oppdaterHotell()" id="selHotell" required>
+        </select>
+
+        <label for="inpEnkeltRom">Antall dobbeltrom?</label>
+        <input type="number"
+               id="inpEnkeltRom"
+               value="0"
+               min="0"
+               required>
+
+        <label for="inpDobbeltRom">Antall dobbeltrom?</label>
+        <input type="number"
+               id="inpDobbeltRom"
+               value="0"
+               min="0"
+               required>
+        <div class="checkboxes">
+            <input type="checkbox" id="inpKulturpass">
+            <label for="inpKulturpass"></label>
+        </div>
+
+    </form>
+
+    <div id="oppsummering">
+        <h3>Oppsummering</h3>
+    </div>
+</main>
+<script>
+
+    // Objekt som bestemmer hvilke destinasjoner man kan reise til og
+    // hvilke hotell som er mulige å velge på den destinasjonen
+    let destinasjoner = {
+        "New York": {
+            "Aurora": {
+                    "sommer": 590,
+                    "vinter": 690,
+                },
+            "Downtown": {
+                    "sommer": 660,
+                    "vinter": 750
+                },
+            "City Hall": {
+                    "sommer": 450,
+                    "vinter": 530
+                },
+            "Wilmont": {
+                    "sommer": 660,
+                    "vinter": 880
+                },
+            "Chelsea inn": {
+                    "sommer": 450,
+                    "vinter": 560
+            }
+        },
+
+        "Amsterdam": {
+        },
+
+        "St. Petersburg": {
+        },
+
+        "Roma": {
+        }
+    };
+
+    let prisKulturpass = 700;
+
+    // Setter opp siden
+    function setup(){
+        let selDestinasjon = document.querySelector("#selDestinasjon");
+        let kulturpassLabel = document.querySelector("[for=inpKulturpass]");
+        let oppdaterEl = document.querySelectorAll("input, select");
+
+
+        // Går igjennom alle destinasjoner og legger in infoen i destinasjonsmenyen
+        for (let dest in destinasjoner){
+            selDestinasjon.innerHTML += `<option value="${dest}">${dest}</option>`;
+        }
+
+        kulturpassLabel.innerHTML = `Kulturpass (${prisKulturpass} kr)`;
+
+        for (let i = 0; i < oppdaterEl.length; i++) {
+            oppdaterEl[i].addEventListener("change", endreOppsummering);
+        }
+    }
+
+    // Lytter funksjon som kjører når destinasjonen er oppdatert
+    function oppdaterDestinasjon(){
+
+        // Henter ut hotell og nullstiller menyen
+        let hotellSel = document.querySelector("#selHotell");
+        hotellSel.innerHTML = "<option value=''>Velg hotell</optionvalue>"
+
+        let dest = document.querySelector("#selDestinasjon").value;
+
+        // Går igjennom alle destinasjonene
+        for (let hotell in destinasjoner[dest]){
+
+            hotellSel.innerHTML += `<option value="${hotell}">${hotell}</option>`;
+
+        }
+    }
+
+    // Lytterfunksjon som kjører når et hotell er oppdatert
+    function oppdaterHotell(){
+        let dest = document.querySelector("#selDestinasjon").value;
+
+        let inpEnkeltRom = document.querySelector("#inpEnkeltRom");
+        let inpDobbeltRom = document.querySelector("#inpDobbeltRom");
+
+        let hotell = document.querySelector("#selHotell").value;
+
+        console.log(dest, hotell);
+
+        let prisSommer = destinasjoner[dest][hotell].sommer;
+        let prisVinter = destinasjoner[dest][hotell].vinter;
+
+        // Oppdaterer input feltene med data
+        inpEnkeltRom.dataset.vinter = prisVinter + 300;
+        inpEnkeltRom.dataset.sommer = prisSommer + 300;
+        inpDobbeltRom.dataset.vinter = prisVinter;
+        inpDobbeltRom.dataset.sommer = prisSommer;
+
+        // Oppdaterer valg av sesong
+        oppdaterSesong();
+    }
+
+    // Oppdater valg av sesong
+    function oppdaterSesong(){
+
+        let labelEnkeltRom = document.querySelector("[for=inpEnkeltRom]")
+        let labelDobbeltRom = document.querySelector("[for=inpDobbeltRom]")
+        let inpEnkeltRom = document.querySelector("#inpEnkeltRom");
+        let inpDobbeltRom = document.querySelector("#inpDobbeltRom");
+        let hotell = document.querySelector("#selHotell").value;
+
+        let sesong = document.querySelector("#selSesong").value;
+
+        // Hvis hotell ikke er valgt
+        if (hotell===""){
+            labelEnkeltRom.innerHTML = "Antall enkeltrom?";
+            labelDobbeltRom.innerHTML = "Antall dobbeltrom?";
+        }else {
+            labelEnkeltRom.innerHTML = `Antall enkeltrom? (${inpEnkeltRom.dataset[sesong]} kr)`;
+            labelDobbeltRom.innerHTML = `Antall dobbeltrom? (${inpDobbeltRom.dataset[sesong]} kr)`;
+        }
+    }
+
+    // Funksjon som oppdaterer bestillingen i oppsummeringen
+    function endreOppsummering(){
+
+
+        let oppsummering = document.querySelector("#oppsummering");
+        let dest = document.querySelector("#selDestinasjon").value;
+        let sesong = document.querySelector("#selSesong").value;
+        let hotell = document.querySelector("#selHotell").value;
+        let inpEnkeltRom = document.querySelector("#inpEnkeltRom");
+        let inpDobbeltRom = document.querySelector("#inpDobbeltRom");
+        let kulturpass = document.querySelector("#inpKulturpass").checked;
+
+        // Hvis brukeren har valgt et negativt antall rom
+        if (Number(inpEnkeltRom.value)<0){
+            inpEnkeltRom.value = 0;
+        }
+
+        // Hvis brukeren har valgt et negativt antall rom
+        if (Number(inpDobbeltRom.value)<0){
+            inpDobbeltRom.value = 0;
+        }
+
+        // Hvis vi ikke har valgt noe
+        if (dest === "" || hotell === ""){
+            oppsummering.innerHTML = "<h3>Oppsummering</h3>";
+            return;
+        }
+
+        let prisHotell = Number(inpEnkeltRom.value)*Number(inpEnkeltRom.dataset[sesong]);
+        prisHotell += Number(inpDobbeltRom.value)*Number(inpDobbeltRom.dataset[sesong]);
+
+        oppsummering.innerHTML = `
+        <h3>Oppsummering</h3>
+        <b>Destinasjon: </b> ${dest}
+        <b>Sesong:</b> ${sesong}
+        <b>Hotell: </b> ${hotell}
+        <b>Pris hotell: </b> ${prisHotell} kr
+        <b>Kultur pass: </b> ${kulturpass ? "Ja" : "Nei"}
+        <b>Pris Totalt:</b><b>${prisHotell + (kulturpass ? prisKulturpass : 0)} kr</b>
+       `;
+
+    }
+
+    window.onload = setup;
+</script>
+</body>
+</html>
