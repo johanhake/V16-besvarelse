@@ -1,5 +1,5 @@
 # it2-v2016
-I dette løsningsforslaget har jeg forsøkt å gjøre det så enkelt som mulig. 
+I dette løsningsforslaget har jeg forsøkt å være konsekvent. Det bruker en god del dynamisk HTML gjennom JavaScript men jeg har gjort noen valg som gjør det enklere å kode løsninger (synes jeg :D )
 
 * Jeg har så langt jeg kan brukt lytterfunksjoner som registreres i HTML-attributtet onfoo istedenfor å registrere de i JS. Dette gjør at jeg kan gjenbruke samme lytterfunksjon men kalle den med ulike argumenter.
 * Jeg bruker nesten aldri document.createElement. All dynamisk kode blir generert ved å skrive til innerHTML. Jeg mener det blir enklest. 
