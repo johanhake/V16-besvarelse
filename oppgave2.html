@@ -14,11 +14,14 @@
             grid-template-columns: 1fr 1fr;
             grid-gap: 1em;
         }
+
+        form button {
+            grid-column: span 2;
+        }
     </style>
 </head>
 <body>
 <h1>Språkquiz!</h1>
-<h3>Feiltolket oppgavetekst. Oppdaterer innen kort.</h3>
 <nav></nav>
 <main></main>
 <script>
@@ -31,27 +34,25 @@
     let alleSporsmal = {
         amerikansk : [
             {
-                sporsmal : "stol",
-                alternativ:["chair", "table", "frame"],
-                korrekt: "chair"
-            },            {
-                sporsmal : "bord",
-                alternativ:["chair", "table", "frame"],
-                korrekt: "table"
-            },            {
-                sporsmal : "ramme",
-                alternativ:["chair", "table", "frame"],
-                korrekt: "frame"
-            },            {
-                sporsmal : "båt",
-                alternativ:["boat", "car", "frame"],
-                korrekt: "boat"
-            },            {
-                sporsmal : "bil",
-                alternativ:["boat", "car", "frame"],
-                korrekt: "car"
+                sporsmal : "Hva betyr order Where?",
+                lyd: "",
+                alternativ:["Hvor", "Vi er", "Var", "Hvorfor"],
+                korrekte: [0]
+            }, {
+                sporsmal : "Hvilke(t) ord kan legges til her? How are...",
+                lyd: "",
+                alternativ:["you", "John doing", "things", "the house", "the wife"],
+                korrekte: [0, 2]
+            }, {
+                sporsmal : "Spill av lydfilen og velg riktig oversettelse.",
+                lyd: "Oversetting.mp3",
+                alternativ:["Hei, mitt navn er Tom", "Jeg er Tom", "Kjenner du Tom?", "Når kommer Tom?"],
+                korrekte: [2]
             }
-        ]
+        ],
+        italiensk: [],
+        russisk: []
+
     };
 
     // Legger inn navbaren
@@ -68,14 +69,19 @@
 
         let sporsmal = `<form onsubmit='sjekkBesvarelse(event,"${sprak}")'>`;
 
+        // Går igjennom spørsmålene og legger inn spørsmålene
         for (let i=0; i < sporsmalListe.length; i++){
             let alternativ = sporsmalListe[i].alternativ;
-            sporsmal += `<article><h3>Hva heter <i>${sporsmalListe[i].sporsmal}</i> på ${sprak}?</h3>`;
+            let korrekte = sporsmalListe[i].korrekte;
+            sporsmal += `<article><h3>${sporsmalListe[i].sporsmal}</h3>`;
+            if(sporsmalListe[i].lyd){
+                sporsmal += `<audio src="lyder/${sporsmalListe[i].lyd}" controls></audio>`;
+            }
             for (let j=0; j < alternativ.length; j++){
                 sporsmal += `<label>
                                 <input name="oppgave_${i}"
-                                       type="radio"
-                                       data-svar="${alternativ[j]}">
+                                       type="checkbox"
+                                       data-poeng="${korrekte.indexOf(j)>=0? 1 : -1}">
                               ${alternativ[j]}
                              </label>`;
             }
@@ -85,46 +91,39 @@
         main.innerHTML = sporsmal;
     }
 
-    // Finner svaret til et spørsmål
-    function sjekkSvar(sprak, oppgaveI){
-        // Henter alle besvarelsene til en type radioknapper
-        let alleRadio = document.querySelectorAll
-                            (`[name=oppgave_${oppgaveI}]`);
-        let korrektSvar = alleSporsmal[sprak][oppgaveI].korrekt;
-
-        console.log(alleRadio, korrektSvar)
-        for (let i=0; i<alleRadio.length; i++){
-            if (alleRadio[i].checked){
-                return alleRadio[i].dataset.svar === korrektSvar;
-            }
-        }
-
-        return false;
-    }
-
+    // Lytter funksjon som sjekker besvarelsen til et språk.
     function sjekkBesvarelse(event, sprak){
         event.preventDefault();
 
+        // Variabler
         let poeng = 0;
+        let maksPoeng = 0;
 
         // Går igjennom alle spørsmålen og teller poeng
         for (let i=0; i< alleSporsmal[sprak].length; i++){
-            if (sjekkSvar(sprak, i)){
-                poeng +=1;
-                console.log("korrekt")
-            }else{
-                poeng -=1;
+
+            // Henter makspoeng for et spørsmål (lengden av korrekte svar listen)
+            maksPoeng += alleSporsmal[sprak][i].korrekte.length;
+
+            // Henter alle checkboksene til spørsmål nr i
+            let allecheckbokser = document.querySelectorAll(`[name=oppgave_${i}]`);
+
+            // Går igjennom checkboksene for å sjekke om de er brukt
+            for (let j=0; j<allecheckbokser.length; j++){
+                if (allecheckbokser[j].checked){
+                    poeng += Number(allecheckbokser[j].dataset.poeng);
+                }
             }
         }
 
-        if (poeng === alleSporsmal[sprak].length){
+        // Gir response til brukeren
+        main.innerHTML = `<h1>Du fikk ${poeng} poeng av ${maksPoeng} mulige.</h1>`;
+        if (poeng === 0 || poeng === 3){
+            main.innerHTML += "<h1>Her må du øver litt mer. Kanskje ta et av de mange språkkursene avisen tilbyr?</h1>";
+        }else if (poeng < 0) {
+            main.innerHTML += "<h1>Dette gikk ikke så bra, men det er håp for alle som vil lære et nytt språk!</h1>";
+        }else if (poeng === maksPoeng){
             main.innerHTML = "<h1>Alle rett! Dette kan du :D</h1>";
-        }else if (poeng === 0 || poeng === 3){
-            main.innerHTML = "<h1>Her må du øver litt mer. Kanskje ta et av de mange språkkursene avisen tilbyr?</h1>";
-        }else if (poeng < 0){
-            main.innerHTML = "<h1>Dette gikk ikke så bra, men det er håp for alle som vil lære et nytt språk!</h1>";
-        }else{
-            main.innerHTML = `<h1>Bra jobbet! Du fikk ${poeng} poeng av ${alleSporsmal[sprak].length} mulige.</h1>`;
         }
     }
 
