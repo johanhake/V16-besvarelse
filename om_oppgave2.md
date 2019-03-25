@@ -14,4 +14,6 @@ Her redogjør jeg for de valgene jeg har tatt underveis i oppgave 2
 * Listen med korrekte svar bruker jeg til å lagre poengene en brukere får hvis de har svart på et av alternativene (klikket på en av checkboksene). Poenget lagres som et data-attributt i hver checkboks. 
 * Når så svarene skal sjekkes går jeg bare igjennom alle spørsmålene og finner checkboksene for hver spørsmål og summerer opp poengene til alle checkboksene som er krysset av. 
 * Til sist gir jeg en fin tilbakemelding avhenging av hvor mange poeng brukeren har fått.
+
+
 [Tilbake](readme.md)
