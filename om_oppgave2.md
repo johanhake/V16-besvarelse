@@ -12,7 +12,7 @@ Her redogjør jeg for de valgene jeg har tatt underveis i oppgave 2
 * Så lages automatisk en navbar hvor brukeren kan velge hvilket språk som skal brukes. Lytterfunksjonen til hver av knappene *lagSporsmal(sprak)* lager et skjema knyttet til spørsmålene for hvert språk.
 * For hvert språk går jeg igjennom listen av spørsmål og genererer korrekt HTML for hvert spørsmål gjennom en for-løkke. For svar-alternativene har jeg en til for-løkke som går igjennom listen med alternativer for hvert spørsmål og lager checkbokser som brukeren kan klikke på for sin besvarelse.
 * Listen med korrekte svar bruker jeg til å lagre poengene en brukere får hvis de har svart på et av alternativene (klikket på en av checkboksene). Poenget lagres som et data-attributt i hver checkboks. 
-* Når så svarene skal sjekkes går jeg bare igjennom alle spørsmålene og finner checkboksene for hver spørsmål og summerer opp poengene til alle checkboksene som er krysset av. 
+* Når så svarene skal sjekkes går jeg bare igjennom alle spørsmålene som er checked og summerer opp poengene til alle checkboksene som er krysset av. 
 * Til sist gir jeg en fin tilbakemelding avhenging av hvor mange poeng brukeren har fått.
 
 

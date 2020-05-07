@@ -52,8 +52,10 @@
         ],
         italiensk: [],
         russisk: []
-
     };
+
+    // Global variabel
+    let maksPoeng;
 
     // Legger inn navbaren
     for (let sprak in alleSporsmal){
@@ -67,28 +69,53 @@
         // Henter listen med alle spørsmål gitt et språk
         let sporsmalListe = alleSporsmal[sprak];
 
-        let sporsmal = `<form onsubmit='sjekkBesvarelse(event,"${sprak}")'>`;
+        // Bygger en tekststreng som skal innholde quizen i form av en 
+        // skjema (form-element)
+        let quiz = `<form onsubmit='sjekkBesvarelse(event,"${sprak}")'>`;
+
+        // Nullstiller maksPoeng
+        maksPoeng = 0;
 
         // Går igjennom spørsmålene og legger inn spørsmålene
         for (let i=0; i < sporsmalListe.length; i++){
+
+            // Henter ut alternativene og hvilke alternativ som er korrekte. 
             let alternativ = sporsmalListe[i].alternativ;
             let korrekte = sporsmalListe[i].korrekte;
-            sporsmal += `<article><h3>${sporsmalListe[i].sporsmal}</h3>`;
+
+            // Øker maksPoeng med maks antall korrekte for hvert spørsmål
+            maksPoeng += korrekte.length;
+
+            // Legger til hvert spørsmål med alternativ innenfor en article
+            // og så selve spørsmålet innenfor et h3-element
+            quiz += `<article><h3>${sporsmalListe[i].sporsmal}</h3>`;
+
+            // Har spørsmålet lyd?
             if(sporsmalListe[i].lyd){
-                sporsmal += `<audio src="lyder/${sporsmalListe[i].lyd}" controls></audio>`;
+
+                // Lage et audio-element
+                quiz += `<audio src="lyder/${sporsmalListe[i].lyd}" controls></audio>`;
             }
+
+            // Går over alternativene
             for (let j=0; j < alternativ.length; j++){
-                sporsmal += `<label>
+                quiz += `<label>
                                 <input name="oppgave_${i}"
                                        type="checkbox"
                                        data-poeng="${korrekte.indexOf(j)>=0? 1 : -1}">
                               ${alternativ[j]}
                              </label>`;
             }
-            sporsmal += "</article>"
+
+            // Avslutter spørsmåls-elementet
+            quiz += "</article>"
         }
-        sporsmal += "<div></div><button>Send inn</button></div></form>";
-        main.innerHTML = sporsmal;
+
+        // Avslutter quizen med en send-inn knapp
+        quiz += "<div></div><button>Send inn</button></div></form>";
+
+        // Legger til quizen til DOMen
+        main.innerHTML = quiz;
     }
 
     // Lytter funksjon som sjekker besvarelsen til et språk.
@@ -97,23 +124,15 @@
 
         // Variabler
         let poeng = 0;
-        let maksPoeng = 0;
+
+        // Henter alle checkboxer som er checked
+        let alleCheckedCheckbokser = document.querySelectorAll("[type=checkbox]:checked");
 
         // Går igjennom alle spørsmålen og teller poeng
-        for (let i=0; i< alleSporsmal[sprak].length; i++){
+        for (let checked of alleCheckedCheckbokser){
 
-            // Henter makspoeng for et spørsmål (lengden av korrekte svar listen)
-            maksPoeng += alleSporsmal[sprak][i].korrekte.length;
-
-            // Henter alle checkboksene til spørsmål nr i
-            let allecheckbokser = document.querySelectorAll(`[name=oppgave_${i}]`);
-
-            // Går igjennom checkboksene for å sjekke om de er brukt
-            for (let j=0; j<allecheckbokser.length; j++){
-                if (allecheckbokser[j].checked){
-                    poeng += Number(allecheckbokser[j].dataset.poeng);
-                }
-            }
+            // Summer poeng attributtet til de valgte check-boksene
+            poeng += Number(checked.dataset.poeng);
         }
 
         // Gir response til brukeren
